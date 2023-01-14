@@ -1,10 +1,10 @@
 using System.Collections.Immutable;
 using System.Text;
-using Its.Search.PrivateEye.Core;
+using Irrelephant.Search.PrivateEye.Core;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace Its.Search.PrivateEye.SourceGenerators;
+namespace Irrelephant.Search.PrivateEye.SourceGenerators;
 
 public abstract class PrivateEyeGeneratorBase : IIncrementalGenerator
 {

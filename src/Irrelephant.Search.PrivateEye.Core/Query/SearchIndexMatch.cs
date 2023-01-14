@@ -1,4 +1,4 @@
-namespace Its.Search.PrivateEye.Core.Query;
+namespace Irrelephant.Search.PrivateEye.Core.Query;
 
 public class SearchIndexMatch
 {

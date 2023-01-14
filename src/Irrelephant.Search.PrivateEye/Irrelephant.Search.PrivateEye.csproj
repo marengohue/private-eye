@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <LangVersion>10.0</LangVersion>
         <Nullable>enable</Nullable>
-        <RootNamespace>Its.Search.PrivateEye</RootNamespace>
+        <RootNamespace>Irrelephant.Search.PrivateEye</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -13,7 +13,7 @@
     </ItemGroup>
     
     <ItemGroup>
-      <ProjectReference Include="..\Its.Search.PrivateEye.Core\Its.Search.PrivateEye.Core.csproj" />
+      <ProjectReference Include="..\Irrelephant.Search.PrivateEye.Core\Irrelephant.Search.PrivateEye.Core.csproj" />
     </ItemGroup>
 
 </Project>

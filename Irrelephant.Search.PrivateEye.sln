@@ -1,10 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Its.Search.PrivateEye.Tests", "src\Its.Search.PrivateEye.Tests\Its.Search.PrivateEye.Tests.csproj", "{83816E0D-3E9F-430E-8131-F834C25427D8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Search.PrivateEye.Tests", "src\Irrelephant.Search.PrivateEye.Tests\Irrelephant.Search.PrivateEye.Tests.csproj", "{83816E0D-3E9F-430E-8131-F834C25427D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Its.Search.PrivateEye", "src\Its.Search.PrivateEye\Its.Search.PrivateEye.csproj", "{B866742A-4105-4C13-ACB1-B596F0542D06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Search.PrivateEye", "src\Irrelephant.Search.PrivateEye\Irrelephant.Search.PrivateEye.csproj", "{B866742A-4105-4C13-ACB1-B596F0542D06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Its.Search.PrivateEye.Core", "src\Its.Search.PrivateEye.Core\Its.Search.PrivateEye.Core.csproj", "{D63CB7ED-7BE0-4361-8009-E0C125449839}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Search.PrivateEye.Core", "src\Irrelephant.Search.PrivateEye.Core\Irrelephant.Search.PrivateEye.Core.csproj", "{D63CB7ED-7BE0-4361-8009-E0C125449839}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{E1A876FA-718B-4FAD-B599-6185F07AD788}"
 EndProject
@@ -12,6 +12,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dotfiles", "dotfiles", "{37
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{3AEB87A8-FC2B-4915-A198-462FC8D1DA3F}"
+	ProjectSection(SolutionItems) = preProject
+		doc\CONCEPT.md = doc\CONCEPT.md
 	EndProjectSection
 EndProject
 Global
