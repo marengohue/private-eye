@@ -17,6 +17,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "doc", "doc", "{3AEB87A8-FC2B-4915-A198-462FC8D1DA3F}"
 	ProjectSection(SolutionItems) = preProject
 		doc\CONCEPT.md = doc\CONCEPT.md
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
