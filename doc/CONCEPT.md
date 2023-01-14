@@ -44,7 +44,9 @@ public class Person
 In order to use the search services, one has to call it's ```Query()``` method and then use the resulting query builder to assemble the query:
 ````csharp
 _searchService.Query()
-    // Search section of the query
+    // Search section of the query. Query can either be connected
+    // to an individual field or the whole document.
+    .Search(idx => idx.Matches("magic*"))
     .Search(idx => idx.Bio.Matches("coffee*"))
     .Search(idx => idx.FirstName.Matches("Chris*"))
 
@@ -67,7 +69,7 @@ _searchService.Query()
 Which ultimately, will get converted into the following Azure Search query(TODO: confirm with docs):
 ````json
 {
-    "search": "Bio:coffee* AND FirstName:Chris*",
+    "search": "magic* AND Bio:coffee* AND FirstName:Chris*",
     "filter": "Age gt 18 and (Nationality eq 'NO' or Nationality eq 'DK') and not search.in(Bio, 'tea*')",
     "sort": "age asc, score asc",
     "facets": ['Occupation', 'Nationality']
