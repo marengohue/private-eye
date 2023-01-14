@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <LangVersion>10.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <RootNamespace>Its.Search.PrivateEye</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\Its.Search.PrivateEye.Core\Its.Search.PrivateEye.Core.csproj" />
+    </ItemGroup>
+
+</Project>
