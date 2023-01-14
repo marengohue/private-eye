@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>10.0</LangVersion>
-        <RootNamespace>Its.Search.PrivateEye.Core</RootNamespace>
+        <RootNamespace>Irrelephant.Search.PrivateEye.Core</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -2,7 +2,7 @@ using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using Azure.Search.Documents.Indexes.Models;
 
-namespace Its.Search.PrivateEye.Core.Query;
+namespace Irrelephant.Search.PrivateEye.Core.Query;
 
 public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 {

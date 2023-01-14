@@ -1,7 +1,7 @@
-using Its.Search.PrivateEye.Core.Filter;
-using Its.Search.PrivateEye.Tests.SearchInfrastructure;
+using Irrelephant.Search.PrivateEye.Core.Filter;
+using Irrelephant.Search.PrivateEye.Tests.SearchInfrastructure;
 
-namespace Its.Search.PrivateEye.Tests;
+namespace Irrelephant.Search.PrivateEye.Tests;
 
 public class FilterParametersGeneratorTests
 {

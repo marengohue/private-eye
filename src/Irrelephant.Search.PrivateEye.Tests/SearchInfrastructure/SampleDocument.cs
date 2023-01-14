@@ -1,7 +1,7 @@
 using Azure.Search.Documents.Indexes;
-using Its.Search.PrivateEye.Core;
+using Irrelephant.Search.PrivateEye.Core;
 
-namespace Its.Search.PrivateEye.Tests.SearchInfrastructure;
+namespace Irrelephant.Search.PrivateEye.Tests.SearchInfrastructure;
 
 [PrivateEye]
 public class SampleDocument

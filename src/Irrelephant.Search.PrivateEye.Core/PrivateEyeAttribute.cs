@@ -1,4 +1,4 @@
-namespace Its.Search.PrivateEye.Core
+namespace Irrelephant.Search.PrivateEye.Core
 {
 
     [AttributeUsage(AttributeTargets.Class)]

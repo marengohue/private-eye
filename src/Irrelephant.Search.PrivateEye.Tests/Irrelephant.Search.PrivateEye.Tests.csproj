@@ -7,7 +7,7 @@
 
         <IsPackable>false</IsPackable>
 
-        <RootNamespace>Its.Search.PrivateEye.Tests</RootNamespace>
+        <RootNamespace>Irrelephant.Search.PrivateEye.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,8 +26,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Its.Search.PrivateEye.Core\Its.Search.PrivateEye.Core.csproj" />
-        <ProjectReference Include="..\Its.Search.PrivateEye\Its.Search.PrivateEye.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+        <ProjectReference Include="..\Irrelephant.Search.PrivateEye.Core\Irrelephant.Search.PrivateEye.Core.csproj" />
+        <ProjectReference Include="..\Irrelephant.Search.PrivateEye\Irrelephant.Search.PrivateEye.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,4 @@
-namespace Its.Search.PrivateEye.Core.Filter;
+namespace Irrelephant.Search.PrivateEye.Core.Filter;
 
 public class SimpleFilterField<TField> : FilterField<TField>
 {

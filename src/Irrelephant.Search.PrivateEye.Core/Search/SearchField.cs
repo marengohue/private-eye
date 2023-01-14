@@ -1,4 +1,4 @@
-namespace Its.Search.PrivateEye.Core.Search;
+namespace Irrelephant.Search.PrivateEye.Core.Search;
 
 public record SearchField<TField>
 {
