@@ -12,7 +12,8 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.AppendLine("using System;");
         builder.AppendLine("using Its.Search.PrivateEye.Core;");
         builder.AppendLine("using Its.Search.PrivateEye.Core.Query;");
-        builder.AppendLine("using Its.Search.PrivateEye.Core.ParameterDefinitions;");
+        builder.AppendLine("using Its.Search.PrivateEye.Core.Search;");
+        builder.AppendLine("using Its.Search.PrivateEye.Core.Filter;");
 
         if (GetComponentNamespace(indexDocumentType) is { } ns)
             builder.AppendLine($"namespace {ns};");
@@ -29,7 +30,9 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.Append(indexDocumentType.Name);
         builder.Append(", ");
         builder.Append(indexDocumentType.Name);
-        builder.AppendLine("SearchParameters> Query()");
+        builder.Append("SearchParameters, ");
+        builder.Append(indexDocumentType.Name);
+        builder.AppendLine("FilterParameters> Query()");
         builder.AppendLine("    {");
         builder.AppendLine("        return new();");
         builder.AppendLine("    }");
@@ -43,7 +46,9 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.Append(indexDocumentType.Name);
         builder.Append(", ");
         builder.Append(indexDocumentType.Name);
-        builder.AppendLine("SearchParameters>");
+        builder.Append("SearchParameters, ");
+        builder.Append(indexDocumentType.Name);
+        builder.AppendLine("FilterParameters>");
     }
 
     protected override string GetComponentName() => "SearchService";

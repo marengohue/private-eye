@@ -2,7 +2,7 @@ using Its.Search.PrivateEye.Core.Query;
 
 namespace Its.Search.PrivateEye.Core;
 
-public interface ISearchService<TIndexDocument, TParameters>
+public interface ISearchService<TIndexDocument, TSearchParams, TFilterParams>
 {
-    SearchQueryBuilder<TIndexDocument, TParameters> Query();
+    SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Query();
 }
