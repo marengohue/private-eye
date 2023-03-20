@@ -14,14 +14,36 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.AppendLine("using Irrelephant.Search.PrivateEye.Core.Query;");
         builder.AppendLine("using Irrelephant.Search.PrivateEye.Core.Search;");
         builder.AppendLine("using Irrelephant.Search.PrivateEye.Core.Filter;");
+        builder.AppendLine("using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;");
+        builder.AppendLine();
 
         if (GetComponentNamespace(indexDocumentType) is { } ns)
             builder.AppendLine($"namespace {ns};");
 
         AppendClassHeader(builder, indexDocumentType);
         builder.AppendLine("{");
+        GenerateFields(builder);
+        GenerateCtor(builder, indexDocumentType);
         GenerateMethods(builder, indexDocumentType);
         builder.AppendLine("}");
+    }
+
+    private void GenerateFields(StringBuilder builder)
+    {
+        builder.AppendLine();
+        builder.AppendLine("    private readonly IQueryTranslator<QueryNode> _translator;");
+        builder.AppendLine();
+    }
+
+    private void GenerateCtor(StringBuilder builder, ITypeSymbol indexDocumentType)
+    {
+        builder.Append("    public ");
+        builder.Append(GetGeneratedTypeName(indexDocumentType));
+        builder.AppendLine("(IQueryTranslator<QueryNode> translator)");
+        builder.AppendLine("    {");
+        builder.AppendLine("        _translator = translator;");
+        builder.AppendLine("    }");
+        builder.AppendLine();
     }
 
     private void GenerateMethods(StringBuilder builder, ITypeSymbol indexDocumentType)
@@ -34,15 +56,15 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.Append(indexDocumentType.Name);
         builder.AppendLine("FilterParameters> Query()");
         builder.AppendLine("    {");
-        builder.AppendLine("        return new();");
+        builder.AppendLine("        return new(_translator);");
         builder.AppendLine("    }");
     }
 
     private static void AppendClassHeader(StringBuilder builder, ITypeSymbol indexDocumentType)
     {
         builder.Append("class ");
-        builder.Append(indexDocumentType.Name);
-        builder.Append("SearchService : ISearchService<");
+        builder.Append(GetGeneratedTypeName(indexDocumentType));
+        builder.Append(" : ISearchService<");
         builder.Append(indexDocumentType.Name);
         builder.Append(", ");
         builder.Append(indexDocumentType.Name);
@@ -52,4 +74,7 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
     }
 
     protected override string GetComponentName() => "SearchService";
+
+    private static string GetGeneratedTypeName(ITypeSymbol indexDocumentType) =>
+        indexDocumentType.Name + "SearchService";
 }
