@@ -4,7 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-
+        <LangVersion>11</LangVersion>
         <IsPackable>false</IsPackable>
 
         <RootNamespace>Irrelephant.Search.PrivateEye.Tests</RootNamespace>
