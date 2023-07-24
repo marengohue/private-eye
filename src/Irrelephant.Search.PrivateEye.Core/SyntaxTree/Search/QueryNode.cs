@@ -1,5 +1,3 @@
-using System.Collections;
-
 namespace Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
 
 public class QueryNode : UnaryNode
