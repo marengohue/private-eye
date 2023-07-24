@@ -1,8 +1,8 @@
 using System.Linq.Expressions;
-using Azure.Search.Documents.Indexes.Models;
-using Irrelephant.Search.PrivateEye.Core.Filter;
+using Irrelephant.Search.PrivateEye.Core.Search;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
+using SearchField = Irrelephant.Search.PrivateEye.Core.Search.SearchField;
 
 namespace Irrelephant.Search.PrivateEye.Core.Query;
 
@@ -27,22 +27,78 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         Expression<Func<TSearchParams, SearchIndexMatch>> predicate)
     {
         var actualExpression = GetActualExpression(predicate.Body);
-        if (actualExpression is MethodCallExpression methodCall)
+        _query = new QueryNode(
+            AnalyzeExpression(actualExpression)
+        );
+        return this;
+    }
+
+    private ExpressionNode AnalyzeExpression(Expression e) =>
+        e switch {
+            MethodCallExpression mc => AnalyzeMethodCall(mc),
+            BinaryExpression { NodeType: ExpressionType.Equal } eq => AnalyzeEquals(eq),
+            BinaryExpression { NodeType: ExpressionType.AndAlso or ExpressionType.And } and => AnalyzeAnd(and),
+            BinaryExpression { NodeType: ExpressionType.OrElse or ExpressionType.Or } or => AnalyzeOr(or),
+            UnaryExpression { NodeType: ExpressionType.Not } not => AnalyzeNot(not),
+            _ => throw new NotSupportedException("Expression not supported!")
+        };
+
+    private ExpressionNode AnalyzeEquals(BinaryExpression binary) =>
+        new StrictMatchNode(
+            GetNodeFromExpression(binary.Left),
+            GetNodeFromExpression(binary.Right)
+        );
+
+    private ExpressionNode AnalyzeAnd(BinaryExpression binaryExpression) =>
+        new AndNode(
+            AnalyzeExpression(binaryExpression.Left),
+            AnalyzeExpression(binaryExpression.Right)
+        );
+
+    private ExpressionNode AnalyzeOr(BinaryExpression binaryExpression) =>
+        new OrNode(
+            AnalyzeExpression(binaryExpression.Left),
+            AnalyzeExpression(binaryExpression.Right)
+        );
+
+    private ExpressionNode AnalyzeNot(UnaryExpression unaryExpression) =>
+        new NotNode(AnalyzeExpression(unaryExpression.Operand));
+
+    private TerminalNode GetNodeFromExpression(Expression expression)
+    {
+        if (expression is MemberExpression memberExpression)
         {
-            if (methodCall.Method.Name == "Matches")
-            {
-                if (methodCall.Object is MemberExpression memberExpression)
-                {
-                    var memberName = memberExpression.Member.Name;
-                    var matchValue = methodCall.Arguments.First();
-
-                    AppendMatch(memberName, GetMatchValue(matchValue));
-                }
-
-            }
+            return new FieldNode(memberExpression.Member.Name);
         }
 
-        return this;
+        return GetMatchValue(expression);
+    }
+
+    private ExpressionNode AnalyzeMethodCall(MethodCallExpression methodCall)
+    {
+        if (methodCall.Object?.Type.IsAssignableFrom(typeof(SearchField)) is not true)
+        {
+            throw new NotSupportedException("Can't call arbitrary methods in expressions just yet.");
+        }
+
+        if (methodCall.Method.Name != nameof(SearchField.Matches))
+        {
+            throw new NotSupportedException("Can't translate the expression tree. Unknown method called!");
+        }
+
+        if (methodCall.Object is MemberExpression memberExpression)
+        {
+            var matchValue = GetMatchValue(methodCall.Arguments.First());
+            if (memberExpression.Type == typeof(FullTextSearchParameters))
+            {
+                return new MatchNode(new DocumentNode(), matchValue);
+            }
+
+            var memberName = memberExpression.Member.Name;
+            return new MatchNode(new FieldNode(memberName), matchValue);
+        }
+
+        throw new NotImplementedException("Can't translate the expression tree. Odd shape innit?");
     }
 
     private TerminalNode GetMatchValue(Expression expression)
@@ -61,11 +117,6 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         }
 
         throw new NotImplementedException("Not matching against a constant");
-    }
-
-    private void AppendMatch(string memberName, TerminalNode matchValue)
-    {
-        _query = new QueryNode(new MatchNode(new FieldNode(memberName), matchValue));
     }
 
     private Expression GetActualExpression(Expression predicate)

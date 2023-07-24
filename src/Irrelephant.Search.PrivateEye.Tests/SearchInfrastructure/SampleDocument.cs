@@ -18,6 +18,9 @@ public class SampleDocument
     [SearchableField(IsFilterable = true)]
     public string SomeText { get; init; } = string.Empty;
 
+    [SearchableField(IsFilterable = true)]
+    public string SomeOtherText { get; init; } = string.Empty;
+
     [SimpleField(IsFilterable = true)]
     public float SomeFloat { get; init; } = 42f;
 
