@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using Irrelephant.Search.PrivateEye.Core.Search;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
+using Irrelephant.Search.PrivateEye.Core.Translation;
 using SearchField = Irrelephant.Search.PrivateEye.Core.Search.SearchField;
 
 namespace Irrelephant.Search.PrivateEye.Core.Query;
@@ -10,9 +11,9 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 {
     private QueryNode? _query;
 
-    private readonly IQueryTranslator<QueryNode> _searchQueryTranslator;
+    private readonly ISearchQueryTranslator _searchQueryTranslator;
 
-    public SearchQueryBuilder(IQueryTranslator<QueryNode> searchQueryTranslator)
+    public SearchQueryBuilder(ISearchQueryTranslator searchQueryTranslator)
     {
         _searchQueryTranslator = searchQueryTranslator;
     }
@@ -27,9 +28,7 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         Expression<Func<TSearchParams, SearchIndexMatch>> predicate)
     {
         var actualExpression = GetActualExpression(predicate.Body);
-        _query = new QueryNode(
-            AnalyzeExpression(actualExpression)
-        );
+        _query = new QueryNode(AnalyzeExpression(actualExpression));
         return this;
     }
 
@@ -76,7 +75,8 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 
     private ExpressionNode AnalyzeMethodCall(MethodCallExpression methodCall)
     {
-        if (methodCall.Object?.Type.IsAssignableFrom(typeof(SearchField)) is not true)
+        var methodTargetType = methodCall.Object?.Type;
+        if (!FittingTargetType(methodTargetType))
         {
             throw new NotSupportedException("Can't call arbitrary methods in expressions just yet.");
         }
@@ -100,6 +100,13 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 
         throw new NotImplementedException("Can't translate the expression tree. Odd shape innit?");
     }
+
+    private bool FittingTargetType(Type? targetType) =>
+        targetType is not null
+        && (
+            typeof(SearchField).IsAssignableFrom(targetType)
+            || typeof(FullTextSearchParameters).IsAssignableFrom(targetType)
+        );
 
     private TerminalNode GetMatchValue(Expression expression)
     {

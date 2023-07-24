@@ -1,6 +1,5 @@
 using System.Text;
 using Azure.Search.Documents.Indexes;
-using Irrelephant.Search.PrivateEye.Core.Filter;
 using Microsoft.CodeAnalysis;
 
 namespace Irrelephant.Search.PrivateEye.SourceGenerators;

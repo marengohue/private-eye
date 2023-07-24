@@ -1,9 +1,9 @@
-using Irrelephant.Search.PrivateEye.Core;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
+using Irrelephant.Search.PrivateEye.Core.Translation;
 
 namespace Irrelephant.Search.PrivateEye.Tests.Mocks;
 
-public class MockQueryTranslator : IQueryTranslator<QueryNode>
+public class MockQueryTranslator : ISearchQueryTranslator
 {
     public QueryNode LastSubmittedQuery { get; private set; } = null!;
 
