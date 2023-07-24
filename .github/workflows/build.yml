@@ -1,0 +1,30 @@
+name: Build and Release
+
+on:
+  pull_request:
+    paths:
+      - src/**
+      - .github/**
+
+  push:
+    branches:
+      - master
+    paths:
+      - src/**
+      - .github/**
+
+jobs:
+  build_and_release:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: dotnet build
+
+      - name: Test
+        run: dotnet test
+
+      - name: Release
+        run: echo "One day..."
