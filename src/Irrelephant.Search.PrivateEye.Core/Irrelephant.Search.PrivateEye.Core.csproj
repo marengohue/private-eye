@@ -7,7 +7,14 @@
         <LangVersion>10.0</LangVersion>
         <RootNamespace>Irrelephant.Search.PrivateEye.Core</RootNamespace>
     </PropertyGroup>
-
+    
+    <PropertyGroup Label="Nuget">
+        <PackageId>Irrelephant.Search.PrivateEye.Core</PackageId>
+        <Version>0.0.1-indev</Version>
+        <Authors>Eugene 'marengo_hue' Rebedailo</Authors>
+        <Company>Irrelephant</Company>
+    </PropertyGroup>
+    
     <ItemGroup>
       <PackageReference Include="Azure.Search.Documents" Version="11.4.0" />
     </ItemGroup>
