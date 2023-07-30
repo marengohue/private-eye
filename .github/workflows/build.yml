@@ -1,11 +1,6 @@
-name: Build and Release
+name: Build and Test (Master)
 
 on:
-  pull_request:
-    paths:
-      - src/**
-      - .github/**
-
   push:
     branches:
       - master
@@ -14,8 +9,8 @@ on:
       - .github/**
 
 jobs:
-  build_and_release:
-    name: Build
+  build_and_test:
+    name: Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -26,5 +21,14 @@ jobs:
       - name: Test
         run: dotnet test
 
-      - name: Release
-        run: echo "One day..."
+      - name: Pack NuGet Packages
+        run: |
+          mkdir -p .publish
+          dotnet pack --output .publish
+
+      - name: Publish NuGet Package
+        run: |
+          dotnet nuget push .publish/**.nupkg \
+              --no-build
+              --api-key {{secrets.NUGET_API_KEY}} \
+              --source https://api.nuget.org/v3/index.json
