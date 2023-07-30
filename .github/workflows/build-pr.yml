@@ -25,12 +25,9 @@ jobs:
       - name: Determine Build Version
         id: determine_version
         run: |
-          RUN_ID=${{ github.run_id }}
-          echo "run_id: $($RUN_ID)"
-          RUN_NO=${{ github.run_number }}
-          echo "run_no: $($RUN_NO)"
-          BUILD_VERSION="$($PACKAGE_VERSION).$($RUN_ID)$($RUN_NO)-alpha"
-          echo "build_ver: $($BUILD_VERSION)"
+          RUN_ID="${{ github.run_id }}"
+          RUN_NO="${{ github.run_number }}"
+          BUILD_VERSION="$PACKAGE_VERSION.$RUN_ID$RUN_NO-alpha"
           echo "build_version = $($BUILD_VERSION)" >> $GITHUB_ENV
 
       - name: Pack NuGet Packages
