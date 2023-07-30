@@ -10,7 +10,9 @@
 
     <PropertyGroup Label="Nuget">
         <PackageId>Irrelephant.Search.PrivateEye</PackageId>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Authors>Eugene 'marengo_hue' Rebedailo</Authors>
         <Company>Irrelephant</Company>
     </PropertyGroup>
@@ -23,4 +25,7 @@
       <ProjectReference Include="..\Irrelephant.Search.PrivateEye.Core\Irrelephant.Search.PrivateEye.Core.csproj" />
     </ItemGroup>
 
+    <ItemGroup Label="Nuget">
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>

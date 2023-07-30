@@ -10,7 +10,9 @@
 
     <PropertyGroup Label="Nuget">
         <PackageId>Irrelephant.Search.PrivateEye.Core</PackageId>
-        <Version>0.0.1</Version>
+        <Version>0.0.2</Version>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
         <Authors>Eugene 'marengo_hue' Rebedailo</Authors>
         <Company>Irrelephant</Company>
     </PropertyGroup>
@@ -19,4 +21,7 @@
       <PackageReference Include="Azure.Search.Documents" Version="11.4.0" />
     </ItemGroup>
 
+    <ItemGroup Label="Nuget">
+        <None Include="README.md" Pack="true" PackagePath="\"/>
+    </ItemGroup>
 </Project>
