@@ -6,9 +6,6 @@ on:
       - src/**
       - .github/**
 
-env:
-  PACKAGE_VERSION: ${{ vars.PACKAGE_VERSION }}
-
 jobs:
   build_and_test:
     name: Build & Test
@@ -36,7 +33,7 @@ jobs:
           dotnet pack \
               --output .publish \
               --include-source \
-              --version-suffix=${{ steps.determine_build_version.outputs.version }}
+              --version-suffix="${{version}}"
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
