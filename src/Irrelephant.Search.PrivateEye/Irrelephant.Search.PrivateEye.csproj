@@ -10,7 +10,7 @@
 
     <PropertyGroup Label="Nuget">
         <PackageId>Irrelephant.Search.PrivateEye</PackageId>
-        <!-- Version is specified by the build pipeline -->
+        <Version>0.0.1</Version>
         <Authors>Eugene 'marengo_hue' Rebedailo</Authors>
         <Company>Irrelephant</Company>
     </PropertyGroup>
