@@ -1,5 +1,5 @@
 # Azure Search Private Eye
-[![Build and Release](https://github.com/marengohue/private-eye/actions/workflows/build.yml/badge.svg)](https://github.com/marengohue/private-eye/actions/workflows/build-master.yml)
+[![Master](https://github.com/marengohue/private-eye/actions/workflows/build-master.yml/badge.svg)](https://github.com/marengohue/private-eye/actions/workflows/build-master.yml)
 
 A set of tools to dynamically generate strongly typed search parameters, services and various other utility classes when working with Azure Search.
 
