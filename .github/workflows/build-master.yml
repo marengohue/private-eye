@@ -27,7 +27,8 @@ jobs:
           dotnet pack \
               --output .publish \
               --no-build \
-              --include-symbols
+              --include-symbols \
+              -p:SymbolPackageFormat=snupkg
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
