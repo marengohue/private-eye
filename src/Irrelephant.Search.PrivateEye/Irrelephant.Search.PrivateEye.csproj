@@ -8,10 +8,17 @@
         <RootNamespace>Irrelephant.Search.PrivateEye</RootNamespace>
     </PropertyGroup>
 
+    <PropertyGroup Label="Nuget">
+        <PackageId>Irrelephant.Search.PrivateEye</PackageId>
+        <Version>0.0.1</Version>
+        <Authors>Eugene 'marengo_hue' Rebedailo</Authors>
+        <Company>Irrelephant</Company>
+    </PropertyGroup>
+
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" PrivateAssets="all" />
     </ItemGroup>
-    
+
     <ItemGroup>
       <ProjectReference Include="..\Irrelephant.Search.PrivateEye.Core\Irrelephant.Search.PrivateEye.Core.csproj" />
     </ItemGroup>

@@ -1,0 +1,44 @@
+name: Build and Test (Pull Request)
+
+on:
+  pull_request:
+    paths:
+      - src/**
+      - .github/**
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: dotnet build --configuration=Debug
+
+      - name: Test
+        run: dotnet test
+
+      - name: Determine Build Version
+        id: determine_build_version
+        run: |
+          RUN_ID="${{ github.run_id }}"
+          RUN_NO="${{ github.run_number }}"
+          BUILD_VERSION="alpha$RUN_ID$RUN_NO"
+          echo "version=$BUILD_VERSION" >> $GITHUB_ENV
+
+      - name: Pack NuGet Packages
+        run: |
+          mkdir -p .publish
+          dotnet pack \
+              --output .publish \
+              --no-build \
+              --include-source \
+              --version-suffix="${{env.version}}"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget
+          path: .publish/*.nupkg
+          retention-days: 5

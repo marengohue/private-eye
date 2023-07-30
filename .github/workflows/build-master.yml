@@ -1,0 +1,44 @@
+name: Build and Test (Master)
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - src/**
+      - .github/**
+
+jobs:
+  build_and_test:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build
+        run: dotnet build --configuration=Release
+
+      - name: Test
+        run: dotnet test
+
+      - name: Pack NuGet Packages
+        run: |
+          mkdir -p .publish
+          dotnet pack \
+              --output .publish \
+              --no-build \
+              --include-symbols
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: nuget
+          path: .publish/*.nupkg
+          retention-days: 15
+
+      - name: Publish NuGet Package
+        run: |
+          dotnet nuget push .publish/**.nupkg \
+              --no-build
+              --api-key {{secrets.NUGET_API_KEY}} \
+              --source https://api.nuget.org/v3/index.json
