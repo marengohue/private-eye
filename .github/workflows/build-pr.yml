@@ -34,6 +34,7 @@ jobs:
               --output .publish \
               --no-build \
               --include-source \
+              -p:SymbolPackageFormat=snupkg \
               --version-suffix="${{env.version}}"
 
       - name: Upload Artifact
