@@ -1,5 +1,4 @@
 using System.Linq.Expressions;
-using System.Reflection;
 using Azure.Search.Documents.Models;
 using Irrelephant.Search.PrivateEye.Core.Search;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree;

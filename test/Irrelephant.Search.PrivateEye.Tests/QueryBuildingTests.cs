@@ -208,6 +208,7 @@ public class QueryBuildingTests
         public string Test2 => "Test";
 
         // TODO: Add async support
+        // ReSharper disable once UnusedMember.Local
         public async Task<string> Test3()
         {
             await Task.Delay(TimeSpan.FromMicroseconds(1));
