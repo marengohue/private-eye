@@ -106,6 +106,28 @@ public class SearchServiceGeneratorTests
     }
 
     [Fact]
+    public async Task TestMultipleCalls_ResultInAnd()
+    {
+        await _searchService.Query()
+            .Search(it => it.SomeText.Matches("Some"))
+            .Search(it => it.SomeOtherText.Matches("Other"))
+            .Search(it => it.FullText.Matches("Wow"))
+            .ExecuteAsync();
+
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
+                new AndNode(
+                    new AndNode(
+                        new MatchNode(new FieldNode("SomeText"), new ValueNode<string>("Some")),
+                        new MatchNode(new FieldNode("SomeOtherText"), new ValueNode<string>("Other"))
+                    ),
+                    new MatchNode(new DocumentNode(), new ValueNode<string>("Wow"))
+                )
+            )
+        );
+    }
+
+    [Fact]
     public async Task TestOperator_Or()
     {
         await _searchService.Query()

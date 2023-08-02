@@ -34,7 +34,12 @@ public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         Expression<Func<TSearchParams, SearchIndexMatch>> predicate)
     {
         var actualExpression = GetActualExpression(predicate.Body);
-        _query = new SearchQueryNode(AnalyzeExpression(actualExpression));
+        var convertedExpression = AnalyzeExpression(actualExpression);
+        _query = _query is not null
+            // Multiple calls to .Search should combine clauses with "AND"
+            ? new SearchQueryNode(new AndNode(_query.Op, convertedExpression))
+            : new SearchQueryNode(convertedExpression);
+
         return this;
     }
 
