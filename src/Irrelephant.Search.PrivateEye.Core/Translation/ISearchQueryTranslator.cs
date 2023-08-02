@@ -5,4 +5,4 @@ namespace Irrelephant.Search.PrivateEye.Core.Translation;
 /// <summary>
 /// Marker interface for translators specific to the search engine.
 /// </summary>
-public interface ISearchQueryTranslator : IQueryTranslator<QueryNode> { }
+public interface ISearchQueryTranslator : IQueryTranslator<SearchQueryNode> { }

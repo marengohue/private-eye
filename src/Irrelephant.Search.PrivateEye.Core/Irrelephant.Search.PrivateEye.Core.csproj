@@ -10,7 +10,7 @@
 
     <PropertyGroup Label="Nuget">
         <PackageId>Irrelephant.Search.PrivateEye.Core</PackageId>
-        <Version>0.0.4</Version>
+        <Version>0.0.5</Version>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Authors>Eugene 'marengo_hue' Rebedailo</Authors>

@@ -9,6 +9,7 @@ public static class AsyncEnumerableExtensions
         {
             list.Add(item);
         }
+
         return list;
     }
 }

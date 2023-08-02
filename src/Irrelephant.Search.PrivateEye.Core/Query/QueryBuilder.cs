@@ -8,33 +8,38 @@ using SearchField = Irrelephant.Search.PrivateEye.Core.Search.SearchField;
 
 namespace Irrelephant.Search.PrivateEye.Core.Query;
 
-public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
+public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 {
-    private QueryNode? _query;
+    private SearchQueryNode? _query;
 
     private readonly ISearchQueryTranslator _searchQueryTranslator;
-    private readonly ISearchQueryExecutor<TIndexDocument> _searchQueryExecutor;
+    private readonly IQueryExecutor<TIndexDocument> _queryExecutor;
 
-    public SearchQueryBuilder(
+    public QueryBuilder(
         ISearchQueryTranslator searchQueryTranslator,
-        ISearchQueryExecutor<TIndexDocument> searchQueryExecutor
+        IQueryExecutor<TIndexDocument> queryExecutor
     )
     {
         _searchQueryTranslator = searchQueryTranslator;
-        _searchQueryExecutor = searchQueryExecutor;
+        _queryExecutor = queryExecutor;
     }
 
-    public SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Where(
+    public QueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Where(
         Expression<Func<TFilterParams, SearchIndexMatch>> predicate)
     {
         return this;
     }
 
-    public SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Search(
+    public QueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Search(
         Expression<Func<TSearchParams, SearchIndexMatch>> predicate)
     {
         var actualExpression = GetActualExpression(predicate.Body);
-        _query = new QueryNode(AnalyzeExpression(actualExpression));
+        var convertedExpression = AnalyzeExpression(actualExpression);
+        _query = _query is not null
+            // Multiple calls to .Search should combine clauses with "AND"
+            ? new SearchQueryNode(new AndNode(_query.Op, convertedExpression))
+            : new SearchQueryNode(convertedExpression);
+
         return this;
     }
 
@@ -71,6 +76,12 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 
     private TerminalNode GetNodeFromExpression(Expression expression)
     {
+        // Implicit conversion to facilitate SearchField comparison to its underlying type
+        if (expression is UnaryExpression { NodeType: ExpressionType.Convert } convert)
+        {
+            expression = convert.Operand;
+        }
+
         if (expression is MemberExpression memberExpression)
         {
             return new FieldNode(memberExpression.Member.Name);
@@ -82,9 +93,12 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
     private ExpressionNode AnalyzeMethodCall(MethodCallExpression methodCall)
     {
         var methodTargetType = methodCall.Object?.Type;
-        if (!FittingTargetType(methodTargetType))
+        if (!ManagedTargetType(methodTargetType))
         {
-            throw new NotSupportedException("Can't call arbitrary methods in expressions just yet.");
+            throw new NotSupportedException(
+                "Can't call arbitrary methods in expressions. " +
+                $"Only members of {nameof(SearchField)} are usable in this context."
+            );
         }
 
         if (methodCall.Method.Name != nameof(SearchField.Matches))
@@ -107,30 +121,38 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         throw new NotImplementedException("Can't translate the expression tree. Odd shape innit?");
     }
 
-    private bool FittingTargetType(Type? targetType) =>
+    private bool ManagedTargetType(Type? targetType) =>
         targetType is not null
-        && (
-            typeof(SearchField).IsAssignableFrom(targetType)
-            || typeof(FullTextSearchParameters).IsAssignableFrom(targetType)
-        );
+        && typeof(SearchField).IsAssignableFrom(targetType);
 
-    private TerminalNode GetMatchValue(Expression expression)
-    {
-        if (expression is ConstantExpression constant)
+    private TerminalNode GetMatchValue(Expression expression) =>
+        expression switch
         {
-            return constant.Value switch
-            {
-                string s => new ValueNode<string>(s),
-                int i32 => new ValueNode<int>(i32),
-                float f32 => new ValueNode<float>(f32),
-                double f64 => new ValueNode<double>(f64),
-                bool b => new ValueNode<bool>(b),
-                _ => throw new NotImplementedException("Unknown constant value")
-            };
-        }
+            ConstantExpression constant => AnalyzeConstantAccessForMatch(constant),
+            _ => AnalyzeWithCompilation(expression)
+        };
 
-        throw new NotImplementedException("Not matching against a constant");
+    private TerminalNode AnalyzeWithCompilation(Expression expr)
+    {
+        // This is a potentially expensive way to obtain the result of an expression
+        // More performance could be gained by analyzing the actual shape.
+        var result = Expression.Lambda(expr).Compile().DynamicInvoke();
+        return (TerminalNode)Activator.CreateInstance(
+            typeof(ValueNode<>).MakeGenericType(expr.Type),
+            result
+        );
     }
+
+    private TerminalNode AnalyzeConstantAccessForMatch(ConstantExpression constant) =>
+        constant.Value switch
+        {
+            string s => new ValueNode<string>(s),
+            int i32 => new ValueNode<int>(i32),
+            float f32 => new ValueNode<float>(f32),
+            double f64 => new ValueNode<double>(f64),
+            bool b => new ValueNode<bool>(b),
+            _ => throw new NotImplementedException("Unknown constant value")
+        };
 
     private Expression GetActualExpression(Expression predicate)
     {
@@ -147,13 +169,13 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
     public Task<SearchResults<TIndexDocument>> ExecuteAsync()
     {
         var stringQuery = TranslateQuery();
-        return _searchQueryExecutor.ExecuteAsync(stringQuery);
+        return _queryExecutor.ExecuteAsync(stringQuery);
     }
 
     private string TranslateQuery() =>
         _query switch
         {
-            null => _searchQueryTranslator.Translate(new QueryNode()),
+            null => _searchQueryTranslator.Translate(new SearchQueryNode()),
             _ => _searchQueryTranslator.Translate(_query)
         };
 }

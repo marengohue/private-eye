@@ -16,7 +16,7 @@ public class LuceneTranslatorTests
     public void EmptyQuery_TranslatesToWildcard()
     {
         _queryTranslator
-            .Translate(new QueryNode())
+            .Translate(new SearchQueryNode())
             .Should().Be("*");
     }
 
@@ -25,7 +25,7 @@ public class LuceneTranslatorTests
     {
         _queryTranslator
             .Translate(
-                new QueryNode(
+                new SearchQueryNode(
                     new MatchNode(
                         new DocumentNode(),
                         new ValueNode<string>("value")
@@ -40,7 +40,7 @@ public class LuceneTranslatorTests
     {
         _queryTranslator
             .Translate(
-                new QueryNode(
+                new SearchQueryNode(
                     new AndNode(
                         new MatchNode(new DocumentNode(), new ValueNode<string>("value")),
                         new MatchNode(new DocumentNode(), new ValueNode<string>("another"))
@@ -55,7 +55,7 @@ public class LuceneTranslatorTests
     {
         _queryTranslator
             .Translate(
-                new QueryNode(
+                new SearchQueryNode(
                     new OrNode(
                         new MatchNode(new DocumentNode(), new ValueNode<string>("value")),
                         new MatchNode(new FieldNode("test"), new ValueNode<string>("another"))
@@ -70,7 +70,7 @@ public class LuceneTranslatorTests
     {
         _queryTranslator
             .Translate(
-                new QueryNode(
+                new SearchQueryNode(
                     new OrNode(
                         new MatchNode(new DocumentNode(), new ValueNode<string>("value")),
                         new AndNode(

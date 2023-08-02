@@ -15,7 +15,7 @@ public class LuceneQueryTranslator : ISearchQueryTranslator
     private const string LuceneOr = " OR ";
     private const string LuceneNot = "NOT ";
 
-    public string Translate(QueryNode node)
+    public string Translate(SearchQueryNode node)
     {
         var builder = new StringBuilder();
         TraverseNode(builder, node.Op);

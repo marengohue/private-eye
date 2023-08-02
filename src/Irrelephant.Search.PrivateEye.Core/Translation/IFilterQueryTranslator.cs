@@ -5,4 +5,4 @@ namespace Irrelephant.Search.PrivateEye.Core.Translation;
 /// <summary>
 /// Marker interface for translators specific to OData filter queries.
 /// </summary>
-public interface IFilterQueryTranslator : IQueryTranslator<QueryNode> { }
+public interface IFilterQueryTranslator : IQueryTranslator<SearchQueryNode> { }
