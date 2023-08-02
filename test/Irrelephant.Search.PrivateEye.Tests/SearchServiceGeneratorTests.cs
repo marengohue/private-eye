@@ -1,4 +1,5 @@
 using Irrelephant.Search.PrivateEye.Core;
+using Irrelephant.Search.PrivateEye.Core.Query;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
 using Irrelephant.Search.PrivateEye.Tests.Mocks;
 using Irrelephant.Search.PrivateEye.Tests.SearchInfrastructure;
@@ -13,7 +14,11 @@ public class SearchServiceGeneratorTests
 
     public SearchServiceGeneratorTests()
     {
-        _searchService = new SampleDocumentSearchService(_searchTranslator);
+        var queryExecutorMock = new Mock<ISearchQueryExecutor<SampleDocument>>();
+        queryExecutorMock
+            .Setup(it => it.ExecuteAsync(It.IsAny<string>()))
+            .ReturnsAsync(() => null!);
+        _searchService = new SampleDocumentSearchService(_searchTranslator, queryExecutorMock.Object);
     }
 
     [Fact]
@@ -29,7 +34,7 @@ public class SearchServiceGeneratorTests
             .Where(it => it.SomeBoolean == true)
             .Where(it => it.Id == "woah")
 
-            .ToArrayAsync();
+            .ExecuteAsync();
     }
 
     [Fact]
@@ -37,7 +42,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => it.SomeText.Matches("Woah"))
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(
@@ -54,7 +59,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => it.FullText.Matches("Woah"))
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(
@@ -71,7 +76,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => it.SomeText == it.SomeOtherText)
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(
@@ -88,7 +93,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => it.SomeText.Matches("Some") && it.SomeOtherText.Matches("Other"))
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(
@@ -105,7 +110,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => it.SomeText.Matches("Some") || it.SomeOtherText.Matches("Other"))
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(
@@ -122,7 +127,7 @@ public class SearchServiceGeneratorTests
     {
         await _searchService.Query()
             .Search(it => !it.SomeText.Matches("Some"))
-            .ToArrayAsync();
+            .ExecuteAsync();
 
         _searchTranslator.LastSubmittedQuery.Should().Be(
             new QueryNode(

@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Azure.Search.Documents.Models;
 using Irrelephant.Search.PrivateEye.Core.Search;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree.Search;
@@ -12,10 +13,15 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
     private QueryNode? _query;
 
     private readonly ISearchQueryTranslator _searchQueryTranslator;
+    private readonly ISearchQueryExecutor<TIndexDocument> _searchQueryExecutor;
 
-    public SearchQueryBuilder(ISearchQueryTranslator searchQueryTranslator)
+    public SearchQueryBuilder(
+        ISearchQueryTranslator searchQueryTranslator,
+        ISearchQueryExecutor<TIndexDocument> searchQueryExecutor
+    )
     {
         _searchQueryTranslator = searchQueryTranslator;
+        _searchQueryExecutor = searchQueryExecutor;
     }
 
     public SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Where(
@@ -138,10 +144,10 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         return predicate;
     }
 
-    public Task<TIndexDocument[]> ToArrayAsync()
+    public Task<SearchResults<TIndexDocument>> ExecuteAsync()
     {
         var stringQuery = TranslateQuery();
-        return Task.FromResult(Array.Empty<TIndexDocument>());
+        return _searchQueryExecutor.ExecuteAsync(stringQuery);
     }
 
     private string TranslateQuery() =>

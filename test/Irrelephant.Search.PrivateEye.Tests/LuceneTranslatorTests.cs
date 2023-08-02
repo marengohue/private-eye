@@ -80,6 +80,6 @@ public class LuceneTranslatorTests
                     )
                 )
             )
-            .Should().Be("(\"value*\" OR (\"something*\" AND (NOT test:\"me\")))");
+            .Should().Be("(\"value*\" OR (\"something*\" AND NOT test:\"me\"))");
     }
 }
