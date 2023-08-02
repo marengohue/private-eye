@@ -53,7 +53,7 @@ public class IntegrationTestFixture : IAsyncLifetime
         );
         SearchService = new SampleDocumentSearchService(
             new LuceneQueryTranslator(),
-            new DefaultSearchQueryExecutor<SampleDocument>(SearchClient)
+            new DefaultQueryExecutor<SampleDocument>(SearchClient)
         );
         await SeedTestData();
         await AwaitIndexInitializedAsync();

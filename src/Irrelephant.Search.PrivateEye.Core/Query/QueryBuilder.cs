@@ -8,33 +8,33 @@ using SearchField = Irrelephant.Search.PrivateEye.Core.Search.SearchField;
 
 namespace Irrelephant.Search.PrivateEye.Core.Query;
 
-public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
+public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 {
-    private QueryNode? _query;
+    private SearchQueryNode? _query;
 
     private readonly ISearchQueryTranslator _searchQueryTranslator;
-    private readonly ISearchQueryExecutor<TIndexDocument> _searchQueryExecutor;
+    private readonly IQueryExecutor<TIndexDocument> _queryExecutor;
 
-    public SearchQueryBuilder(
+    public QueryBuilder(
         ISearchQueryTranslator searchQueryTranslator,
-        ISearchQueryExecutor<TIndexDocument> searchQueryExecutor
+        IQueryExecutor<TIndexDocument> queryExecutor
     )
     {
         _searchQueryTranslator = searchQueryTranslator;
-        _searchQueryExecutor = searchQueryExecutor;
+        _queryExecutor = queryExecutor;
     }
 
-    public SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Where(
+    public QueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Where(
         Expression<Func<TFilterParams, SearchIndexMatch>> predicate)
     {
         return this;
     }
 
-    public SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Search(
+    public QueryBuilder<TIndexDocument, TSearchParams, TFilterParams> Search(
         Expression<Func<TSearchParams, SearchIndexMatch>> predicate)
     {
         var actualExpression = GetActualExpression(predicate.Body);
-        _query = new QueryNode(AnalyzeExpression(actualExpression));
+        _query = new SearchQueryNode(AnalyzeExpression(actualExpression));
         return this;
     }
 
@@ -147,13 +147,13 @@ public class SearchQueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
     public Task<SearchResults<TIndexDocument>> ExecuteAsync()
     {
         var stringQuery = TranslateQuery();
-        return _searchQueryExecutor.ExecuteAsync(stringQuery);
+        return _queryExecutor.ExecuteAsync(stringQuery);
     }
 
     private string TranslateQuery() =>
         _query switch
         {
-            null => _searchQueryTranslator.Translate(new QueryNode()),
+            null => _searchQueryTranslator.Translate(new SearchQueryNode()),
             _ => _searchQueryTranslator.Translate(_query)
         };
 }

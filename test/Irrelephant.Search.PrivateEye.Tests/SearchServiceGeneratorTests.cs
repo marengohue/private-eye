@@ -14,7 +14,7 @@ public class SearchServiceGeneratorTests
 
     public SearchServiceGeneratorTests()
     {
-        var queryExecutorMock = new Mock<ISearchQueryExecutor<SampleDocument>>();
+        var queryExecutorMock = new Mock<IQueryExecutor<SampleDocument>>();
         queryExecutorMock
             .Setup(it => it.ExecuteAsync(It.IsAny<string>()))
             .ReturnsAsync(() => null!);
@@ -44,8 +44,8 @@ public class SearchServiceGeneratorTests
             .Search(it => it.SomeText.Matches("Woah"))
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new MatchNode(
                     new FieldNode("SomeText"),
                     new ValueNode<string>("Woah")
@@ -61,8 +61,8 @@ public class SearchServiceGeneratorTests
             .Search(it => it.FullText.Matches("Woah"))
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new MatchNode(
                     new DocumentNode(),
                     new ValueNode<string>("Woah")
@@ -78,8 +78,8 @@ public class SearchServiceGeneratorTests
             .Search(it => it.SomeText == it.SomeOtherText)
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new StrictMatchNode(
                     new FieldNode("SomeText"),
                     new FieldNode("SomeOtherText")
@@ -95,8 +95,8 @@ public class SearchServiceGeneratorTests
             .Search(it => it.SomeText.Matches("Some") && it.SomeOtherText.Matches("Other"))
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new AndNode(
                     new MatchNode(new FieldNode("SomeText"), new ValueNode<string>("Some")),
                     new MatchNode(new FieldNode("SomeOtherText"), new ValueNode<string>("Other"))
@@ -112,8 +112,8 @@ public class SearchServiceGeneratorTests
             .Search(it => it.SomeText.Matches("Some") || it.SomeOtherText.Matches("Other"))
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new OrNode(
                     new MatchNode(new FieldNode("SomeText"), new ValueNode<string>("Some")),
                     new MatchNode(new FieldNode("SomeOtherText"), new ValueNode<string>("Other"))
@@ -129,8 +129,8 @@ public class SearchServiceGeneratorTests
             .Search(it => !it.SomeText.Matches("Some"))
             .ExecuteAsync();
 
-        _searchTranslator.LastSubmittedQuery.Should().Be(
-            new QueryNode(
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
                 new NotNode(
                     new MatchNode(
                         new FieldNode("SomeText"),

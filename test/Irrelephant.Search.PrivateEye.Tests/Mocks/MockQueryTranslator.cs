@@ -5,11 +5,11 @@ namespace Irrelephant.Search.PrivateEye.Tests.Mocks;
 
 public class MockQueryTranslator : ISearchQueryTranslator
 {
-    public QueryNode LastSubmittedQuery { get; private set; } = null!;
+    public SearchQueryNode LastSubmittedSearchQuery { get; private set; } = null!;
 
-    public string Translate(QueryNode root)
+    public string Translate(SearchQueryNode root)
     {
-        LastSubmittedQuery = root;
+        LastSubmittedSearchQuery = root;
         return string.Empty;
     }
 }

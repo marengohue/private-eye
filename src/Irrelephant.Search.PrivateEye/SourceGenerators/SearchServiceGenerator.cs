@@ -34,9 +34,9 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
     {
         builder.AppendLine();
         builder.AppendLine("    private readonly ISearchQueryTranslator _searchTranslator;");
-        builder.Append("    private readonly ISearchQueryExecutor<");
+        builder.Append("    private readonly IQueryExecutor<");
         builder.Append(indexDocumentType.Name);
-        builder.AppendLine("> _searchQueryExecutor;");
+        builder.AppendLine("> _queryExecutor;");
 
         builder.AppendLine();
     }
@@ -45,19 +45,19 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
     {
         builder.Append("    public ");
         builder.Append(GetGeneratedTypeName(indexDocumentType));
-        builder.Append("(ISearchQueryTranslator searchTranslator, ISearchQueryExecutor<");
+        builder.Append("(ISearchQueryTranslator searchTranslator, IQueryExecutor<");
         builder.Append(indexDocumentType.Name);
         builder.AppendLine("> searchQueryExecutor)");
         builder.AppendLine("    {");
         builder.AppendLine("        _searchTranslator = searchTranslator;");
-        builder.AppendLine("        _searchQueryExecutor = searchQueryExecutor;");
+        builder.AppendLine("        _queryExecutor = searchQueryExecutor;");
         builder.AppendLine("    }");
         builder.AppendLine();
     }
 
     private void GenerateMethods(StringBuilder builder, ITypeSymbol indexDocumentType)
     {
-        builder.Append("    public SearchQueryBuilder<");
+        builder.Append("    public QueryBuilder<");
         builder.Append(indexDocumentType.Name);
         builder.Append(", ");
         builder.Append(indexDocumentType.Name);
@@ -65,7 +65,7 @@ public class SearchServiceGenerator : PrivateEyeGeneratorBase
         builder.Append(indexDocumentType.Name);
         builder.AppendLine("FilterParameters> Query()");
         builder.AppendLine("    {");
-        builder.AppendLine("        return new(_searchTranslator, _searchQueryExecutor);");
+        builder.AppendLine("        return new(_searchTranslator, _queryExecutor);");
         builder.AppendLine("    }");
     }
 

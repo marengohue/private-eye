@@ -1,19 +1,18 @@
-using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 
 namespace Irrelephant.Search.PrivateEye.Core.Query;
 
-public interface ISearchQueryExecutor<TResult>
+public interface IQueryExecutor<TResult>
 {
     Task<SearchResults<TResult>> ExecuteAsync(string searchQuery);
 }
 
-public class DefaultSearchQueryExecutor<TResult> : ISearchQueryExecutor<TResult>
+public class DefaultQueryExecutor<TResult> : IQueryExecutor<TResult>
 {
     private readonly SearchClient _searchClient;
 
-    public DefaultSearchQueryExecutor(SearchClient searchClient)
+    public DefaultQueryExecutor(SearchClient searchClient)
     {
         _searchClient = searchClient;
     }
