@@ -222,13 +222,17 @@ public class QueryBuildingTests
         var guid = Guid.NewGuid();
         await _searchService.Query()
             .Search(it => it.FullText.Matches(guid.ToString("D") + testClass.Test2 + testClass.Test()))
+            .Search(it => it.SomeText == testClass.Test())
             .ExecuteAsync();
 
         _searchTranslator.LastSubmittedSearchQuery.Should().Be(
             new SearchQueryNode(
-                new MatchNode(
-                    new DocumentNode(),
-                    new ValueNode<string>(guid.ToString("D") + "TestTest")
+                new AndNode(
+                    new MatchNode(
+                        new DocumentNode(),
+                        new ValueNode<string>(guid.ToString("D") + "TestTest")
+                    ),
+                    new StrictMatchNode(new FieldNode("SomeText"), new ValueNode<string>("Test"))
                 )
             )
         );

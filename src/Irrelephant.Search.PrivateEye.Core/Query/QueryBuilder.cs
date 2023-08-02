@@ -77,6 +77,12 @@ public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
 
     private TerminalNode GetNodeFromExpression(Expression expression)
     {
+        // Implicit conversion to facilitate SearchField comparison to its underlying type
+        if (expression is UnaryExpression { NodeType: ExpressionType.Convert } convert)
+        {
+            expression = convert.Operand;
+        }
+
         if (expression is MemberExpression memberExpression)
         {
             return new FieldNode(memberExpression.Member.Name);
