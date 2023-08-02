@@ -20,10 +20,7 @@ jobs:
         run: dotnet test --filter FullyQualifiedName\!~Integration
 
       - name: Run Integration Tests
-        run: dotnet test \
-            --filter FullyQualifiedName~Integration \
-            --environment AzureSearch__Endpoint=${{vars.INT_TEST_AZ_SEARCH_ENDPOINT}} \
-            --environment AzureSearch__Key=${{secrets.INT_TEST_AZ_SEARCH_KEY}}
+        run: dotnet test --filter FullyQualifiedName~Integration --environment AzureSearch__Endpoint=${{vars.INT_TEST_AZ_SEARCH_ENDPOINT}} --environment AzureSearch__Key=${{secrets.INT_TEST_AZ_SEARCH_KEY}}
 
       - name: Determine Build Version
         id: determine_build_version
