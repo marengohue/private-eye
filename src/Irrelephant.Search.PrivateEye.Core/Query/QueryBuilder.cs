@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Reflection;
 using Azure.Search.Documents.Models;
 using Irrelephant.Search.PrivateEye.Core.Search;
 using Irrelephant.Search.PrivateEye.Core.SyntaxTree;
@@ -87,9 +88,12 @@ public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
     private ExpressionNode AnalyzeMethodCall(MethodCallExpression methodCall)
     {
         var methodTargetType = methodCall.Object?.Type;
-        if (!FittingTargetType(methodTargetType))
+        if (!ManagedTargetType(methodTargetType))
         {
-            throw new NotSupportedException("Can't call arbitrary methods in expressions just yet.");
+            throw new NotSupportedException(
+                "Can't call arbitrary methods in expressions. " +
+                $"Only members of {nameof(SearchField)} are usable in this context."
+            );
         }
 
         if (methodCall.Method.Name != nameof(SearchField.Matches))
@@ -112,30 +116,38 @@ public class QueryBuilder<TIndexDocument, TSearchParams, TFilterParams>
         throw new NotImplementedException("Can't translate the expression tree. Odd shape innit?");
     }
 
-    private bool FittingTargetType(Type? targetType) =>
+    private bool ManagedTargetType(Type? targetType) =>
         targetType is not null
-        && (
-            typeof(SearchField).IsAssignableFrom(targetType)
-            || typeof(FullTextSearchParameters).IsAssignableFrom(targetType)
-        );
+        && typeof(SearchField).IsAssignableFrom(targetType);
 
-    private TerminalNode GetMatchValue(Expression expression)
-    {
-        if (expression is ConstantExpression constant)
+    private TerminalNode GetMatchValue(Expression expression) =>
+        expression switch
         {
-            return constant.Value switch
-            {
-                string s => new ValueNode<string>(s),
-                int i32 => new ValueNode<int>(i32),
-                float f32 => new ValueNode<float>(f32),
-                double f64 => new ValueNode<double>(f64),
-                bool b => new ValueNode<bool>(b),
-                _ => throw new NotImplementedException("Unknown constant value")
-            };
-        }
+            ConstantExpression constant => AnalyzeConstantAccessForMatch(constant),
+            _ => AnalyzeWithCompilation(expression)
+        };
 
-        throw new NotImplementedException("Not matching against a constant");
+    private TerminalNode AnalyzeWithCompilation(Expression expr)
+    {
+        // This is a potentially expensive way to obtain the result of an expression
+        // More performance could be gained by analyzing the actual shape.
+        var result = Expression.Lambda(expr).Compile().DynamicInvoke();
+        return (TerminalNode)Activator.CreateInstance(
+            typeof(ValueNode<>).MakeGenericType(expr.Type),
+            result
+        );
     }
+
+    private TerminalNode AnalyzeConstantAccessForMatch(ConstantExpression constant) =>
+        constant.Value switch
+        {
+            string s => new ValueNode<string>(s),
+            int i32 => new ValueNode<int>(i32),
+            float f32 => new ValueNode<float>(f32),
+            double f64 => new ValueNode<double>(f64),
+            bool b => new ValueNode<bool>(b),
+            _ => throw new NotImplementedException("Unknown constant value")
+        };
 
     private Expression GetActualExpression(Expression predicate)
     {

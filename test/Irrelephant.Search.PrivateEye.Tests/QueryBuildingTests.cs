@@ -6,13 +6,13 @@ using Irrelephant.Search.PrivateEye.Tests.SearchInfrastructure;
 
 namespace Irrelephant.Search.PrivateEye.Tests;
 
-public class SearchServiceGeneratorTests
+public class QueryBuildingTests
 {
     private readonly ISearchService<SampleDocument, SampleDocumentSearchParameters, SampleDocumentFilterParameters> _searchService;
 
     private readonly MockQueryTranslator _searchTranslator =  new();
 
-    public SearchServiceGeneratorTests()
+    public QueryBuildingTests()
     {
         var queryExecutorMock = new Mock<IQueryExecutor<SampleDocument>>();
         queryExecutorMock
@@ -139,6 +139,96 @@ public class SearchServiceGeneratorTests
                 new OrNode(
                     new MatchNode(new FieldNode("SomeText"), new ValueNode<string>("Some")),
                     new MatchNode(new FieldNode("SomeOtherText"), new ValueNode<string>("Other"))
+                )
+            )
+        );
+    }
+
+    private readonly string _someOtherText = "Other";
+    private const string SomeConst = "Const";
+    private string SomeProp { get; set; } = "Prop";
+
+    [Fact]
+    public async Task Test_VariableAndPropertyAccess_InExpressions()
+    {
+        var someText = "Some";
+        await _searchService.Query()
+            .Search(it => it.FullText.Matches(someText))
+            .Search(it => it.FullText.Matches(_someOtherText))
+            .Search(it => it.FullText.Matches(SomeConst))
+            .Search(it => it.FullText.Matches(SomeProp))
+            .ExecuteAsync();
+
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
+                new AndNode(
+                    new AndNode(
+                        new AndNode(
+                            new MatchNode(new DocumentNode(), new ValueNode<string>("Some")),
+                            new MatchNode(new DocumentNode(), new ValueNode<string>("Other"))
+                        ),
+                        new MatchNode(new DocumentNode(), new ValueNode<string>("Const"))
+                    ),
+                    new MatchNode(new DocumentNode(), new ValueNode<string>("Prop"))
+                )
+            )
+        );
+    }
+
+    private string GetSomeText() => "Func";
+    private string GetSomeText(string other) => "Woah" + other;
+    private static string GetStaticText() => "Lol";
+
+    [Fact]
+    private async Task TestFunctionCalls_InExpressions()
+    {
+        await _searchService.Query()
+            .Search(it => it.FullText.Matches(GetSomeText() + GetStaticText()))
+            .Search(it => it.FullText.Matches(GetSomeText()))
+            .Search(it => it.FullText.Matches(GetSomeText("Huh")))
+            .ExecuteAsync();
+
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
+                new AndNode(
+                    new AndNode(
+                        new MatchNode(new DocumentNode(), new ValueNode<string>("FuncLol")),
+                        new MatchNode(new DocumentNode(), new ValueNode<string>("Func"))
+                    ),
+                    new MatchNode(new DocumentNode(), new ValueNode<string>("WoahHuh"))
+                )
+
+            )
+        );
+    }
+
+    private class TestClass
+    {
+        public string Test() => "Test";
+        public string Test2 => "Test";
+
+        // TODO: Add async support
+        public async Task<string> Test3()
+        {
+            await Task.Delay(TimeSpan.FromMicroseconds(1));
+            return "Test";
+        }
+    }
+
+    [Fact]
+    private async Task Test_ComplexMatchResult()
+    {
+        var testClass = new TestClass();
+        var guid = Guid.NewGuid();
+        await _searchService.Query()
+            .Search(it => it.FullText.Matches(guid.ToString("D") + testClass.Test2 + testClass.Test()))
+            .ExecuteAsync();
+
+        _searchTranslator.LastSubmittedSearchQuery.Should().Be(
+            new SearchQueryNode(
+                new MatchNode(
+                    new DocumentNode(),
+                    new ValueNode<string>(guid.ToString("D") + "TestTest")
                 )
             )
         );
