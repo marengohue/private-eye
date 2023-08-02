@@ -66,10 +66,8 @@ public class LuceneQueryTranslator : ISearchQueryTranslator
 
         if (node is NotNode not)
         {
-            builder.Append(LuceneOpenExpr);
             builder.Append(LuceneNot);
             TraverseNode(builder, not.Op);
-            builder.Append(LuceneCloseExpr);
             return;
         }
 

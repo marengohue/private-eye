@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{8764E5AD-9C94-4D3E-BA47-A37230F4C49A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Irrelephant.Search.PrivateEye.Tests.Integration", "test\Irrelephant.Search.PrivateEye.Tests.Integration\Irrelephant.Search.PrivateEye.Tests.Integration.csproj", "{476251D9-10D7-4BDB-A251-C920AC16D6A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{D63CB7ED-7BE0-4361-8009-E0C125449839}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D63CB7ED-7BE0-4361-8009-E0C125449839}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D63CB7ED-7BE0-4361-8009-E0C125449839}.Release|Any CPU.Build.0 = Release|Any CPU
+		{476251D9-10D7-4BDB-A251-C920AC16D6A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{476251D9-10D7-4BDB-A251-C920AC16D6A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{476251D9-10D7-4BDB-A251-C920AC16D6A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{476251D9-10D7-4BDB-A251-C920AC16D6A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{B866742A-4105-4C13-ACB1-B596F0542D06} = {E1A876FA-718B-4FAD-B599-6185F07AD788}
@@ -56,5 +62,6 @@ Global
 		{E5C665E5-26BE-4632-8E88-2444227D0DF7} = {3792CEA8-6219-4D72-BF44-71A85B480173}
 		{DC3A1B0D-0635-4F2F-9B32-FECCC25B65CE} = {E5C665E5-26BE-4632-8E88-2444227D0DF7}
 		{83816E0D-3E9F-430E-8131-F834C25427D8} = {8764E5AD-9C94-4D3E-BA47-A37230F4C49A}
+		{476251D9-10D7-4BDB-A251-C920AC16D6A9} = {8764E5AD-9C94-4D3E-BA47-A37230F4C49A}
 	EndGlobalSection
 EndGlobal
